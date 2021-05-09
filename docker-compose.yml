@@ -1,0 +1,41 @@
+version: "3"
+services:
+  client:
+    container_name: webapp-client
+    restart: always
+    build: ./client
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client:/client
+      - /client/node_modules
+    links:
+      - api
+    networks:
+      - webappnetwork
+  api:
+    container_name: webapp-api
+    build: ./api
+    restart: always
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./api:/api
+      - /api/node_modules
+    links:
+      - mongodb
+    networks:
+      - webappnetwork
+  mongodb:
+    image: mongo
+    restart: always
+    container_name: mongodb
+    volumes:
+      - ./data:/data/db
+    ports:
+      - 27017:27017
+    networks:
+      - webappnetwork
+networks:
+  webappnetwork:
+    driver: bridge
